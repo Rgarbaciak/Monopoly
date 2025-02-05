@@ -1,83 +1,89 @@
-import { ethers } from "ethers";
-import MonopolyTokenABI from "../MonopolyTokenABI.json"; // Remplace par le chemin correct vers ton ABI
+import { ethers, Contract } from "ethers";
+import MonopolyTokenABI from "../MonopolyTokenABI.json";
 
-// Adresse de déploiement du contrat (à modifier avec l'adresse réelle après le déploiement)
-const contractAddress = "ADRESSE_DU_CONTRAT";
+const contractAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
 
 let provider, signer, contract;
-
-// Initialiser le provider (MetaMask)
 const connectWallet = async () => {
   if (window.ethereum) {
-    provider = new ethers.BrowserProvider(window.ethereum); // Version ethers.js v6.x
-    await provider.send("eth_requestAccounts", []); // Demande la connexion à MetaMask
+    provider = new ethers.BrowserProvider(window.ethereum);
+    const network = await provider.getNetwork();
+    console.log(
+      "Réseau connecté :",
+      network.name,
+      "Chain ID :",
+      network.chainId
+    );
+    await provider.send("eth_requestAccounts", []);
     signer = await provider.getSigner();
-    contract = new ethers.Contract(contractAddress, MonopolyTokenABI, signer);
+    contract = new Contract(contractAddress, MonopolyTokenABI.abi, signer);
+    console.log("Contrat initialisé :", contract);
+    testContract();
+
     return signer;
   } else {
     throw new Error("MetaMask n'est pas détecté. Veuillez l'installer !");
   }
 };
 
-// Récupérer le provider actuel
-const getProvider = () => {
-  if (!provider)
-    throw new Error("Provider non initialisé. Connectez d'abord votre wallet.");
-  return provider;
-};
-
-// Récupérer le signer actuel
-const getSigner = () => {
-  if (!signer)
-    throw new Error("Signer non initialisé. Connectez d'abord votre wallet.");
-  return signer;
-};
-
-// Initialiser le contrat (avec le signer)
 const getContract = () => {
   if (!contract)
     throw new Error("Contrat non initialisé. Connectez d'abord votre wallet.");
   return contract;
 };
 
-// Acheter une propriété
-const buyProperty = async (name, type, price) => {
-  const contract = getContract();
-  const tx = await contract.mintProperty(name, type, {
-    value: ethers.parseEther(price.toString()), // Convertir le prix en Wei
-  });
-  await tx.wait(); // Attendre la confirmation de la transaction
-  return tx;
+const getAllProperties = async () => {
+  // try {
+  //   const contract = getContract();
+  //   console.log("Contrat connecté :", contract);
+  //   const totalSupply = await contract.totalSupply();
+  //   console.log("Total Supply :", totalSupply.toBigInt().toString()); // ou totalSupply.toNumber()
+  //   const properties = [];
+  //   for (let i = 0; i < totalSupply; i++) {
+  //     try {
+  //       const propertyDetails = await contract.getPropertyDetails(i);
+  //       properties.push({
+  //         id: i,
+  //         name: propertyDetails[0],
+  //         type: propertyDetails[1],
+  //         location: propertyDetails[2],
+  //         value: ethers.formatEther(propertyDetails[3]), // Convertir Wei en ETH
+  //         surface: propertyDetails[4],
+  //         documentHash: propertyDetails[5],
+  //         imageHash: propertyDetails[6],
+  //         createdAt: new Date(propertyDetails[7] * 1000).toLocaleDateString(),
+  //         lastTransferAt: new Date(
+  //           propertyDetails[8] * 1000
+  //         ).toLocaleDateString(),
+  //         forSale: propertyDetails[9],
+  //         salePrice: ethers.formatEther(propertyDetails[10]), // Convertir Wei en ETH
+  //       });
+  //     } catch (err) {
+  //       console.error(
+  //         `Erreur lors de la récupération de la propriété ${i}`,
+  //         err
+  //       );
+  //     }
+  //   }
+  //   console.log("Propriétés récupérées :", properties);
+  //   return properties;
+  // } catch (err) {
+  //   console.error("Erreur lors de la récupération des propriétés :", err);
+  //   throw err;
+  // }
 };
 
-// Récupérer toutes les propriétés
-const getProperties = async () => {
-  const contract = getContract();
-  const totalSupply = await contract.totalSupply(); // Nombre total de propriétés mintées
-  const properties = [];
-  for (let i = 0; i < totalSupply; i++) {
-    const tokenURI = await contract.tokenURI(i); // Récupère l'URI du token
-    const response = await fetch(tokenURI); // Récupère les métadonnées depuis l'URI
-    const metadata = await response.json();
-    properties.push(metadata);
+const testContract = async () => {
+  try {
+    const contract = getContract();
+    const totalSupply = contract.totalSupply();
+    console.log("Fonctions disponibles :", totalSupply);
+
+    // const name = await contract.name();
+    // console.log("Nom du contrat :", name);
+  } catch (err) {
+    console.error("Erreur lors de l'appel à name :", err);
   }
-  return properties;
 };
 
-// Échanger des propriétés
-const tradeProperty = async (tokenId1, tokenId2) => {
-  const contract = getContract();
-  const tx = await contract.tradeProperty(tokenId1, tokenId2); // Appelle la fonction d'échange
-  await tx.wait(); // Attendre la confirmation de la transaction
-  return tx;
-};
-
-export {
-  connectWallet,
-  getProvider,
-  getSigner,
-  getContract,
-  buyProperty,
-  getProperties,
-  tradeProperty,
-};
+export { connectWallet, getContract, getAllProperties, testContract };

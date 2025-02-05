@@ -4,6 +4,11 @@ const hre = require("hardhat");
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
   console.log("Déploiement avec le compte :", deployer.address);
+  console.log(
+    "Solde du déployeur :",
+    (await hre.ethers.provider.getBalance(deployer.address)).toString(),
+    "wei"
+  );
 
   const MonopolyToken = await hre.ethers.getContractFactory("MonopolyToken");
   console.log("Déploiement en cours du contrat MonopolyToken...");
@@ -11,8 +16,12 @@ async function main() {
   const monopolyToken = await MonopolyToken.deploy();
   await monopolyToken.waitForDeployment(); // Attendre que le contrat soit déployé
 
-  // Pour ethers v6, l'adresse se trouve dans la propriété "target"
-  console.log("Contrat déployé à l'adresse :", monopolyToken.target);
+  console.log("Contrat déployé avec succès !");
+  console.log("Adresse du contrat :", monopolyToken.target);
+  console.log(
+    "Hash de la transaction :",
+    monopolyToken.deploymentTransaction().hash
+  );
 }
 
 main()
