@@ -87,29 +87,54 @@ contract MonopolyToken is ERC721, Ownable {
 
         _ownershipCounts[to]++;
     }
+function createProperty(
+    address owner,
+    string memory name,
+    string memory propertyType,
+    string memory location,
+    uint256 value,
+    uint256 surface,
+    string memory documentHash,
+    string memory imageHash,
+    bool forSale,
+    uint256 salePrice
+) public onlyOwner {
+    uint256 tokenId = _tokenIdCounter;
+    _tokenIdCounter++;
+    _safeMint(owner, tokenId);
 
-    function initializeProperties() public onlyOwner {
-        require(!_initialized, "Properties already initialized");
-        _initialized = true;
-        _initializing = true; // Activer l'état d'initialisation
+    _properties[tokenId] = Property({
+        name: name,
+        propertyType: propertyType,
+        location: location,
+        value: value,
+        surface: surface,
+        documentHash: documentHash,
+        imageHash: imageHash,
+        createdAt: block.timestamp,
+        lastTransferAt: block.timestamp,
+        forSale: forSale,
+        salePrice: salePrice
+    });
+
+    string memory metadata = string(
+        abi.encodePacked(
+            '{"name":"', name,
+            '","type":"', propertyType,
+            '","location":"', location,
+            '","value":"', uint2str(value),
+            ' ETH","surface":"', uint2str(surface),
+            ' m2","documentHash":"', documentHash,
+            '","imageHash":"', imageHash, '"}'
+        )
+    );
+
+    _setTokenURI(tokenId, metadata);
+
+    _ownershipCounts[owner]++;
+}
 
 
-        uint256 originalLimit = _ownershipCounts[owner()]; // Save current state
-
-        // Temporarily reset the owner's property count to bypass the limit
-        _ownershipCounts[owner()] = 0;
-
-        // Mint properties
-        mintMonopolyToken(owner(), "Maison 1", "maison", "Rue 1", 10, 100, "docHash1", "imgHash1");
-        mintMonopolyToken(owner(), "Maison 2", "maison", "Rue 2", 12, 120, "docHash2", "imgHash2");
-        mintMonopolyToken(owner(), "Maison 3", "maison", "Rue 3", 15, 130, "docHash3", "imgHash3");
-        mintMonopolyToken(owner(), "Maison 4", "maison", "Rue 4", 20, 140, "docHash4", "imgHash4");
-        mintMonopolyToken(owner(), "Gare 1", "gare", "Place Gare 1", 50, 500, "docHash5", "imgHash5");
-        mintMonopolyToken(owner(), "Hotel 1", "hotel", "Avenue Hotel 1", 100, 1000, "docHash6", "imgHash6");
-
-        // Restore the original state
-        _ownershipCounts[owner()] = originalLimit;
-    }
 
     function tradeProperty(
         uint256[] memory tokenIdsFromUser1,

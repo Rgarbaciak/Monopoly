@@ -22,6 +22,10 @@ async function main() {
     "Hash de la transaction :",
     monopolyToken.deploymentTransaction().hash
   );
+
+  // Afficher les informations sur le réseau
+  const network = await hre.ethers.provider.getNetwork();
+  console.log("Réseau connecté :", network.name, "Chain ID :", network.chainId);
 }
 
 main()

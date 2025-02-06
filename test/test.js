@@ -1,9 +1,9 @@
 const { ethers } = require("ethers");
-const MonopolyTokenABI = require("./frontend/src/MonopolyTokenABI.json");
+const MonopolyTokenABI = require("../frontend/src/MonopolyTokenABI.json");
 
 (async () => {
   const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545"); // URL du nœud local
-  const contractAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570"; // Remplacez par l'adresse correcte
+  const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"; // Remplacez par l'adresse correcte
   const contract = new ethers.Contract(
     contractAddress,
     MonopolyTokenABI.abi,
