@@ -14,7 +14,7 @@ async function main() {
   console.log("Déploiement en cours du contrat MonopolyToken...");
 
   const monopolyToken = await MonopolyToken.deploy();
-  await monopolyToken.waitForDeployment(); // Attendre que le contrat soit déployé
+  await monopolyToken.waitForDeployment();
 
   console.log("Contrat déployé avec succès !");
   console.log("Adresse du contrat :", monopolyToken.target);

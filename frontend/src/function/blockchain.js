@@ -27,14 +27,13 @@ const getProperties = async () => {
   try {
     const contract = getContract();
     const totalSupply = await contract.totalSupply();
-    console.log("Total Supply :", totalSupply.toString()); // Affiche totalSupply
+    console.log("Total Supply :", totalSupply.toString());
     const properties = [];
 
     for (let i = 0; i < totalSupply; i++) {
       try {
         const propertyDetails = await contract.getPropertyDetails(i);
-        const owner = await contract.ownerOf(i); // Récupère le propriétaire
-
+        const owner = await contract.ownerOf(i);
         // Conversion explicite des BigInt en Number ou String
         properties.push({
           id: i,

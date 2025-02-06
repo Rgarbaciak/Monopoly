@@ -1,0 +1,256 @@
+[
+    {
+        "name": "Villa des Roses",
+        "propertyType": "maison",
+        "location": "Rue 1",
+        "value": "14",
+        "surface": 234,
+        "documentHash": "docHashMaison1",
+        "imageHash": "imgHashMaison1",
+        "forSale": false,
+        "salePrice": "10"
+    },
+    {
+        "name": "Maison Bleu Ciel",
+        "propertyType": "maison",
+        "location": "Rue 2",
+        "value": "16",
+        "surface": 213,
+        "documentHash": "docHashMaison2",
+        "imageHash": "imgHashMaison2",
+        "forSale": false,
+        "salePrice": "1"
+    },
+    {
+
+        "name": "Pavillon du Lac",
+        "propertyType": "maison",
+        "location": "Rue 3",
+        "value": "12",
+        "surface": 147,
+        "documentHash": "docHashMaison3",
+        "imageHash": "imgHashMaison3",
+        "forSale": true,
+        "salePrice": "5"
+    },
+    {
+        "name": "Domaine des Ch\u00eanes",
+        "propertyType": "maison",
+        "location": "Rue 4",
+        "value": "9",
+        "surface": 152,
+        "documentHash": "docHashMaison4",
+        "imageHash": "imgHashMaison4",
+        "forSale": false,
+        "salePrice": "4"
+    },
+    {
+        "name": "R\u00e9sidence \u00c9meraude",
+        "propertyType": "maison",
+        "location": "Rue 5",
+        "value": "16",
+        "surface": 286,
+        "documentHash": "docHashMaison5",
+        "imageHash": "imgHashMaison5",
+        "forSale": true,
+        "salePrice": "9"
+    },
+    {
+        "name": "Villa du Soleil",
+        "propertyType": "maison",
+        "location": "Rue 6",
+        "value": "12",
+        "surface": 201,
+        "documentHash": "docHashMaison6",
+        "imageHash": "imgHashMaison6",
+        "forSale": true,
+        "salePrice": "7"
+    },
+    {
+        "name": "Maison des Arbres",
+        "propertyType": "maison",
+        "location": "Rue 7",
+        "value": "11",
+        "surface": 109,
+        "documentHash": "docHashMaison7",
+        "imageHash": "imgHashMaison7",
+        "forSale": true,
+        "salePrice": "13"
+    },
+    {
+        "name": "Bungalow des Pins",
+        "propertyType": "maison",
+        "location": "Rue 8",
+        "value": "8",
+        "surface": 125,
+        "documentHash": "docHashMaison8",
+        "imageHash": "imgHashMaison8",
+        "forSale": true,
+        "salePrice": "1"
+    },
+    {
+        "name": "Demeure de l'Or\u00e9e",
+        "propertyType": "maison",
+        "location": "Rue 9",
+        "value": "14",
+        "surface": 248,
+        "documentHash": "docHashMaison9",
+        "imageHash": "imgHashMaison9",
+        "forSale": true,
+        "salePrice": "7"
+    },
+    {
+        "name": "Villa Magnifique",
+        "propertyType": "maison",
+        "location": "Rue 10",
+        "value": "12",
+        "surface": 130,
+        "documentHash": "docHashMaison10",
+        "imageHash": "imgHashMaison10",
+        "forSale": true,
+        "salePrice": "1"
+    },
+    {
+        "name": "R\u00e9sidence Harmonie",
+        "propertyType": "maison",
+        "location": "Rue 11",
+        "value": "14",
+        "surface": 120,
+        "documentHash": "docHashMaison11",
+        "imageHash": "imgHashMaison11",
+        "forSale": false,
+        "salePrice": "2"
+    },
+    {
+        "name": "Maison des \u00c9toiles",
+        "propertyType": "maison",
+        "location": "Rue 12",
+        "value": "16",
+        "surface": 242,
+        "documentHash": "docHashMaison12",
+        "imageHash": "imgHashMaison12",
+        "forSale": true,
+        "salePrice": "14"
+    },
+    {
+        "name": "Villa Oc\u00e9ane",
+        "propertyType": "maison",
+        "location": "Rue 13",
+        "value": "9",
+        "surface": 272,
+        "documentHash": "docHashMaison13",
+        "imageHash": "imgHashMaison13",
+        "forSale": true,
+        "salePrice": "14"
+    },
+    {
+        "name": "Pavillon Azur",
+        "propertyType": "maison",
+        "location": "Rue 14",
+        "value": "16",
+        "surface": 298,
+        "documentHash": "docHashMaison14",
+        "imageHash": "imgHashMaison14",
+        "forSale": true,
+        "salePrice": "2"
+    },
+    {
+        "name": "Manoir Belle Vue",
+        "propertyType": "maison",
+        "location": "Rue 15",
+        "value": "13",
+        "surface": 109,
+        "documentHash": "docHashMaison15",
+        "imageHash": "imgHashMaison15",
+        "forSale": true,
+        "salePrice": "10"
+    },
+    {
+        "name": "Gare de Lyon",
+        "propertyType": "gare",
+        "location": "Place Gare 1",
+        "value": "68",
+        "surface": 519,
+        "documentHash": "docHashGare1",
+        "imageHash": "imgHashGare1",
+        "forSale": false,
+        "salePrice": "62"
+    },
+    {
+        "name": "Gare Saint-Charles",
+        "propertyType": "gare",
+        "location": "Place Gare 2",
+        "value": "55",
+        "surface": 621,
+        "documentHash": "docHashGare2",
+        "imageHash": "imgHashGare2",
+        "forSale": true,
+        "salePrice": "57"
+    },
+    {
+        "name": "Gare du Nord",
+        "propertyType": "gare",
+        "location": "Place Gare 3",
+        "value": "46",
+        "surface": 822,
+        "documentHash": "docHashGare3",
+        "imageHash": "imgHashGare3",
+        "forSale": false,
+        "salePrice": "44"
+    },
+    {
+        "name": "Gare Montparnasse",
+        "propertyType": "gare",
+        "location": "Place Gare 4",
+        "value": "56",
+        "surface": 838,
+        "documentHash": "docHashGare4",
+        "imageHash": "imgHashGare4",
+        "forSale": true,
+        "salePrice": "51"
+    },
+    {
+        "name": "Gare de l'Est",
+        "propertyType": "gare",
+        "location": "Place Gare 5",
+        "value": "70",
+        "surface": 574,
+        "documentHash": "docHashGare5",
+        "imageHash": "imgHashGare5",
+        "forSale": true,
+        "salePrice": "61"
+    },
+    {
+        "name": "H\u00f4tel des Arts",
+        "propertyType": "hotel",
+        "location": "Avenue H\u00f4tel 1",
+        "value": "129",
+        "surface": 1609,
+        "documentHash": "docHashHotel1",
+        "imageHash": "imgHashHotel1",
+        "forSale": false,
+        "salePrice": "125"
+    },
+    {
+        "name": "Grand H\u00f4tel Royal",
+        "propertyType": "hotel",
+        "location": "Avenue H\u00f4tel 2",
+        "value": "94",
+        "surface": 1150,
+        "documentHash": "docHashHotel2",
+        "imageHash": "imgHashHotel2",
+        "forSale": true,
+        "salePrice": "124"
+    },
+    {
+        "name": "H\u00f4tel de la Paix",
+        "propertyType": "hotel",
+        "location": "Avenue H\u00f4tel 3",
+        "value": "118",
+        "surface": 1794,
+        "documentHash": "docHashHotel3",
+        "imageHash": "imgHashHotel3",
+        "forSale": true,
+        "salePrice": "88"
+    }
+]
