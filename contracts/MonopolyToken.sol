@@ -134,6 +134,28 @@ function createProperty(
     _ownershipCounts[owner]++;
 }
 
+function updateProperty(
+    uint256 tokenId,
+    uint256 newValue,
+    uint256 newSurface,
+    bool newForSale,
+    uint256 newSalePrice
+) public {
+    require(ownerOf(tokenId) == msg.sender, "You are not the owner of this property");
+    
+    Property storage property = _properties[tokenId];
+
+    property.value = newValue;
+    property.surface = newSurface;
+    property.forSale = newForSale;
+    property.salePrice = newSalePrice;
+
+    emit PropertyUpdated(tokenId, newValue, newSurface, newForSale, newSalePrice);
+}
+
+// Événement pour suivre les mises à jour des propriétés
+event PropertyUpdated(uint256 tokenId, uint256 newValue, uint256 newSurface, bool newForSale, uint256 newSalePrice);
+event PropertyTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 value);
 
 
     function tradeProperty(
@@ -174,30 +196,25 @@ function createProperty(
         emit PropertyListedForSale(tokenId, price);
     }
 
-    function buyProperty(uint256 tokenId) public payable {
-        Property storage property = _properties[tokenId];
-        require(property.forSale, "Property is not for sale");
-        require(msg.value >= property.salePrice, "Insufficient funds to buy the property");
+function buyProperty(uint256 tokenId) public payable {
+    Property storage property = _properties[tokenId];
+    require(property.forSale, "Property is not for sale");
+    require(msg.value >= property.salePrice, "Insufficient funds to buy the property");
 
-        address seller = ownerOf(tokenId);
+    address seller = ownerOf(tokenId);
+    _transfer(seller, msg.sender, tokenId);
 
-        // Transfer the property
-        _transfer(seller, msg.sender, tokenId);
+    property.forSale = false;
+    property.salePrice = 0;
+    property.lastTransferAt = block.timestamp;
 
-        // Update property details
-        property.forSale = false;
-        property.salePrice = 0;
-        property.lastTransferAt = block.timestamp;
+    _ownershipCounts[seller]--;
+    _ownershipCounts[msg.sender]++;
 
-        // Update ownership counts
-        _ownershipCounts[seller]--;
-        _ownershipCounts[msg.sender]++;
+    payable(seller).transfer(msg.value);
 
-        // Transfer payment to the seller
-        payable(seller).transfer(msg.value);
-
-        emit PropertySold(tokenId, seller, msg.sender, msg.value);
-    }
+    emit PropertyTransferred(tokenId, seller, msg.sender, msg.value);
+}
 
     function totalSupply() public view returns (uint256) {
         return _tokenIdCounter;
