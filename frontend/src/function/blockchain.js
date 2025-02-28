@@ -230,6 +230,211 @@ const getUserProperties = async () => {
   }
 };
 
+const tradeProperty = async (tokenIdsFromUser1, tokenIdsFromUser2, user2) => {
+  try {
+    const contract = getContract();
+    const signer = await provider.getSigner();
+
+    console.log("Échange de propriétés en cours...");
+    console.log("Propriétés User1 : ", tokenIdsFromUser1);
+    console.log("Propriétés User2 : ", tokenIdsFromUser2);
+    console.log("User2 : ", user2);
+
+    const tx = await contract
+      .connect(signer)
+      .tradeProperty(tokenIdsFromUser1, tokenIdsFromUser2, user2);
+
+    await tx.wait();
+    console.log("Échange effectué avec succès !");
+    return true;
+  } catch (err) {
+    console.error("Erreur lors de l'échange :", err);
+    return false;
+  }
+};
+
+const getUserPropertiesByAddress = async (userAddress) => {
+  try {
+    const contract = getContract();
+    const propertyIds = await contract.getUserPropertiesByAddress(userAddress);
+
+    // ✅ Vérifier si on reçoit bien un tableau valide
+    console.log("IDs des propriétés récupérées :", propertyIds);
+
+    if (!propertyIds || propertyIds.length === 0) {
+      console.warn("L'utilisateur ne possède aucune propriété.");
+      return [];
+    }
+
+    const properties = [];
+    for (let i = 0; i < propertyIds.length; i++) {
+      const propertyDetails = await contract.getPropertyDetails(propertyIds[i]);
+      properties.push({
+        id: propertyIds[i].toString(),
+        name: propertyDetails[0],
+        type: propertyDetails[1],
+        location: propertyDetails[2],
+        value: ethers.formatEther(propertyDetails[3].toString()),
+        surface: Number(propertyDetails[4]),
+        documentHash: propertyDetails[5],
+        imageHash: propertyDetails[6],
+        createdAt: new Date(
+          Number(propertyDetails[7]) * 1000
+        ).toLocaleDateString(),
+        lastTransferAt: new Date(
+          Number(propertyDetails[8]) * 1000
+        ).toLocaleDateString(),
+        forSale: propertyDetails[9],
+        salePrice: ethers.formatEther(propertyDetails[10].toString()),
+        owner: userAddress,
+      });
+    }
+
+    console.log("Propriétés récupérées :", properties);
+    return properties;
+  } catch (err) {
+    console.error("🚨 Erreur lors de la récupération des propriétés :", err);
+    return [];
+  }
+};
+const tradeWithMetaMask = async (toAddress, valueInEth) => {
+  try {
+    if (!window.ethereum) throw new Error("MetaMask n'est pas installé !");
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const senderAddress = await signer.getAddress();
+
+    console.log("📌 Envoi depuis :", senderAddress);
+    console.log("📌 Envoi vers :", toAddress);
+    console.log("📌 Montant :", valueInEth);
+
+    const tx = await signer.sendTransaction({
+      to: toAddress,
+      value: ethers.parseEther(valueInEth.toString()), // Convertir en Wei
+    });
+
+    console.log("✅ Transaction envoyée :", tx);
+    await tx.wait();
+    console.log("🎉 Échange validé !");
+    return tx;
+  } catch (err) {
+    console.error("🚨 Erreur lors de l'échange :", err);
+    return null;
+  }
+};
+
+const proposeTradeWithMetaMask = async (
+  user1Tokens,
+  user2Tokens,
+  user2Address
+) => {
+  try {
+    if (!window.ethereum) throw new Error("MetaMask n'est pas installé !");
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const user1Address = await signer.getAddress();
+
+    const tradeData = {
+      user1: user1Address,
+      user2: user2Address,
+      user1Tokens: user1Tokens.join(","), // Stocker sous forme de chaîne
+      user2Tokens: user2Tokens.join(","),
+      timestamp: Date.now(),
+    };
+
+    console.log("📌 Échange proposé :", tradeData);
+
+    const signature = await signer.signMessage(JSON.stringify(tradeData));
+
+    console.log("✅ Signature générée :", signature);
+
+    return { tradeData, signature };
+  } catch (err) {
+    console.error("🚨 Erreur lors de la signature de l'échange :", err);
+    return null;
+  }
+};
+
+const acceptTradeWithMetaMask = async (tradeData, signature) => {
+  try {
+    if (!window.ethereum) throw new Error("MetaMask n'est pas installé !");
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const user2Address = await signer.getAddress();
+
+    if (user2Address.toLowerCase() !== tradeData.user2.toLowerCase()) {
+      throw new Error(
+        "🚨 Vous n'êtes pas l'utilisateur autorisé à accepter cet échange !"
+      );
+    }
+
+    const recoveredAddress = ethers.verifyMessage(
+      JSON.stringify(tradeData),
+      signature
+    );
+
+    if (recoveredAddress.toLowerCase() !== tradeData.user1.toLowerCase()) {
+      throw new Error(
+        "🚨 Signature invalide ! L'échange pourrait être falsifié."
+      );
+    }
+
+    console.log("✅ Signature vérifiée ! L'échange est authentique.");
+
+    const contract = getContract();
+    const tx = await contract
+      .connect(signer)
+      .tradeProperty(
+        tradeData.user1Tokens.split(",").map(Number),
+        tradeData.user2Tokens.split(",").map(Number),
+        tradeData.user2
+      );
+
+    await tx.wait();
+    console.log("🎉 Échange validé et exécuté !");
+    return true;
+  } catch (err) {
+    console.error("🚨 Erreur lors de l'acceptation de l'échange :", err);
+    return false;
+  }
+};
+const getCooldownAndOwnershipInfo = async (userAddress) => {
+  try {
+    const contract = getContract(); // Récupérer l'instance du contrat
+    const cooldownData = await contract.getCooldownAndOwnershipInfo(
+      userAddress
+    );
+
+    if (!cooldownData || cooldownData.length < 4) {
+      console.error("❌ Données de cooldown invalides :", cooldownData);
+      return {
+        lastTxTime: 0,
+        nextAllowedTx: 0,
+        purchaseLockTime: 0,
+        propertiesOwned: 0,
+      };
+    }
+
+    return {
+      lastTxTime: Number(cooldownData[0] || 0),
+      nextAllowedTx: Number(cooldownData[1] || 0),
+      purchaseLockTime: Number(cooldownData[2] || 0),
+      propertiesOwned: Number(cooldownData[3] || 0),
+    };
+  } catch (error) {
+    console.error("🚨 Erreur lors de la récupération du cooldown :", error);
+    return {
+      lastTxTime: 0,
+      nextAllowedTx: 0,
+      purchaseLockTime: 0,
+      propertiesOwned: 0,
+    };
+  }
+};
+
 export {
   connectWallet,
   getContract,
@@ -238,4 +443,9 @@ export {
   updateProperty,
   getUserTransactions,
   getUserProperties,
+  tradeProperty,
+  getUserPropertiesByAddress,
+  proposeTradeWithMetaMask,
+  acceptTradeWithMetaMask,
+  getCooldownAndOwnershipInfo,
 };

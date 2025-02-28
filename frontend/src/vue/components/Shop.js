@@ -4,6 +4,7 @@ import {
   getProperties,
   buyProperty,
   updateProperty,
+  getCooldownAndOwnershipInfo,
 } from "../../function/blockchain";
 import { useNavigate } from "react-router-dom";
 
@@ -16,33 +17,73 @@ function Shop() {
   const [newSurface, setNewSurface] = useState("");
   const [newForSale, setNewForSale] = useState(false);
   const [newSalePrice, setNewSalePrice] = useState("");
+  const [cooldownEnd, setCooldownEnd] = useState(0);
+  const [lockEnd, setLockEnd] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [lockTimeLeft, setLockTimeLeft] = useState(0);
+  const [canBuy, setCanBuy] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProperties = async () => {
-      setLoading(true);
+    const fetchCooldownInfo = async () => {
       try {
         await connectWallet(); // Connexion au wallet
-        const fetchedProperties = await getProperties(); // Récupération des propriétés
+        const fetchedProperties = await getProperties();
         setProperties(fetchedProperties);
+
+        const cooldownInfo = await getCooldownAndOwnershipInfo(
+          window.ethereum.selectedAddress
+        );
+
+        if (cooldownInfo) {
+          setCooldownEnd(cooldownInfo.nextAllowedTx);
+          setLockEnd(cooldownInfo.purchaseLockTime);
+        }
       } catch (err) {
         console.error("Erreur lors de la récupération des propriétés :", err);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchProperties();
+    fetchCooldownInfo();
   }, []);
 
-  // ✅ Fonction d'achat
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Math.floor(Date.now() / 1000); // Timestamp actuel en secondes
+
+      setTimeLeft(cooldownEnd > now ? cooldownEnd - now : 0);
+      setLockTimeLeft(lockEnd > now ? lockEnd - now : 0);
+
+      // Désactiver l'achat si le cooldown ou le lock sont actifs
+      setCanBuy(cooldownEnd <= now && lockEnd <= now);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [cooldownEnd, lockEnd]);
+
   const handleBuy = async (propertyId, salePrice) => {
+    if (!canBuy) {
+      alert("Vous devez attendre avant d'acheter une nouvelle propriété !");
+      return;
+    }
+
     setBuying(propertyId);
     try {
       await buyProperty(propertyId, salePrice);
       alert(`Propriété ${propertyId} achetée avec succès !`);
-      const updatedProperties = await getProperties(); // Recharger les propriétés
+
+      const updatedProperties = await getProperties();
       setProperties(updatedProperties);
+
+      const cooldownInfo = await getCooldownAndOwnershipInfo(
+        window.ethereum.selectedAddress
+      );
+
+      if (cooldownInfo) {
+        setCooldownEnd(cooldownInfo.nextAllowedTx);
+        setLockEnd(cooldownInfo.purchaseLockTime);
+      }
     } catch (err) {
       alert(`Erreur lors de l'achat : ${err.message}`);
     } finally {
@@ -68,9 +109,6 @@ function Shop() {
     }
     setEditingProperty(null); // Ferme le formulaire après modification
   };
-  const _handleProfil = async () => {
-    navigate("/profil");
-  };
 
   if (loading) {
     return (
@@ -83,6 +121,21 @@ function Shop() {
       <h1 className="text-center text-4xl font-bold py-8">
         Boutique de Propriétés
       </h1>
+      <div className="mt-4 p-4 bg-gray-200 text-center rounded-lg">
+        {timeLeft > 0 ? (
+          <p className="text-red-500 font-bold">
+            ⏳ Prochain achat possible dans {timeLeft} secondes
+          </p>
+        ) : lockTimeLeft > 0 ? (
+          <p className="text-orange-500 font-bold">
+            🔒 Achat verrouillé encore {lockTimeLeft} secondes
+          </p>
+        ) : (
+          <p className="text-green-500 font-bold">
+            ✅ Vous pouvez acheter une nouvelle propriété
+          </p>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
         {properties.map((property) => (

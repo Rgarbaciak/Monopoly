@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ConnectWallet from "./components/ConnectWallet";
 import Shop from "./components/Shop";
 import Profil from "./components/profil";
+import Exchange from "./components/exchange";
+import Navbar from "./container/NavBar";
 
 function App() {
   const [userAddress, setUserAddress] = useState("");
@@ -13,6 +15,7 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route
           path="/"
@@ -20,6 +23,7 @@ function App() {
         />
         <Route path="/shop" element={<Shop userAddress={userAddress} />} />
         <Route path="/profil" element={<Profil userAddress={userAddress} />} />
+        <Route path="/exchange" element={<Exchange />} />
       </Routes>
     </Router>
   );
