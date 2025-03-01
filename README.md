@@ -19,7 +19,6 @@ MonopolyToken est un smart contract Ethereum permettant la gestion d'un jeu de M
 - **React.js** pour l’interface utilisateur
 - **Ethers.js** pour interagir avec la blockchain
 - **IPFS** pour stocker les images des propriétés
-- **Pinata / NFT.Storage** pour une gestion permanente des fichiers IPFS (optionnel)
 
 ## Installation et Déploiement
 
@@ -49,6 +48,7 @@ npx hardhat run scripts/deploy.js --network localhost
 
 ```sh
 cd frontend
+npm install
 npm start
 ```
 
