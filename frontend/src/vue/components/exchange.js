@@ -13,10 +13,9 @@ function Exchange() {
   const [selectedUser1, setSelectedUser1] = useState([]);
   const [selectedUser2, setSelectedUser2] = useState([]);
   const [user2Address, setUser2Address] = useState("");
-  const [pendingTrades, setPendingTrades] = useState([]); // Liste des échanges en attente
+  const [pendingTrades, setPendingTrades] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔄 Récupérer les propriétés de l'utilisateur connecté
   useEffect(() => {
     const fetchProperties = async () => {
       await connectWallet();
@@ -26,20 +25,17 @@ function Exchange() {
     fetchProperties();
   }, []);
 
-  // 🔎 Récupérer les propriétés de l'autre utilisateur
   const fetchUser2Properties = async () => {
     if (user2Address.trim() !== "") {
       try {
         const properties = await getUserPropertiesByAddress(user2Address);
         setUser2Properties(properties);
       } catch (error) {
-        console.error("🚨 Erreur récupération des propriétés :", error);
         alert("Impossible de récupérer les propriétés de cet utilisateur.");
       }
     }
   };
 
-  // 📌 Proposer un échange en signant avec MetaMask
   const handleProposeTrade = async () => {
     if (selectedUser1.length === 0 || selectedUser2.length === 0) {
       alert("Sélectionnez au moins une propriété pour chaque utilisateur !");
@@ -55,20 +51,18 @@ function Exchange() {
       );
       if (trade) {
         alert("Échange signé ! Demandez à l'autre utilisateur de l'accepter.");
-        setPendingTrades([...pendingTrades, trade]); // Ajouter à la liste des échanges en attente
+        setPendingTrades([...pendingTrades, trade]);
       }
     } catch (err) {
-      console.error("🚨 Erreur lors de la proposition :", err);
+      console.error("Erreur lors de la proposition :", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Accepter un échange via MetaMask
   const handleAcceptTrade = async (trade) => {
-    console.log("🕵️‍♂️ Vérification de l'échange :", trade);
     if (!trade) {
-      console.error("🚨 Aucune donnée d'échange trouvée !");
+      console.error("Aucune donnée d'échange trouvée !");
       return;
     }
     await acceptTradeWithMetaMask(trade.tradeData, trade.signature);
@@ -81,7 +75,6 @@ function Exchange() {
       </h1>
 
       <div className="p-4">
-        {/* 🏠 Entrée pour saisir l'adresse de l'autre utilisateur */}
         <label className="block font-bold">
           Adresse Ethereum de l'autre utilisateur :
         </label>
@@ -99,7 +92,6 @@ function Exchange() {
           Vérifier les biens
         </button>
 
-        {/* 🏠 Liste des propriétés de l'utilisateur connecté */}
         <h2 className="text-xl font-bold mt-4">Vos Propriétés :</h2>
         {userProperties.length > 0 ? (
           userProperties.map((property) => (
@@ -124,7 +116,6 @@ function Exchange() {
           <p>Aucune propriété trouvée.</p>
         )}
 
-        {/* 🏠 Liste des propriétés de l'autre utilisateur */}
         <h2 className="text-xl font-bold mt-4">
           Propriétés de l'autre utilisateur :
         </h2>
@@ -151,7 +142,6 @@ function Exchange() {
           <p>Aucune propriété trouvée pour cet utilisateur.</p>
         )}
 
-        {/* 🔄 Bouton pour proposer un échange */}
         <button
           className="mt-6 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"
           onClick={handleProposeTrade}
@@ -160,7 +150,6 @@ function Exchange() {
           {loading ? "Proposition en cours..." : "Proposer un échange"}
         </button>
 
-        {/* ✅ Liste des échanges en attente */}
         <h2 className="text-xl font-bold mt-6">Échanges en attente</h2>
         {pendingTrades.length > 0 ? (
           <ul>

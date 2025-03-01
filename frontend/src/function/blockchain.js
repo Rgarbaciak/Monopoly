@@ -27,7 +27,6 @@ const getProperties = async () => {
   try {
     const contract = getContract();
     const totalSupply = await contract.totalSupply();
-    console.log("Total Supply :", totalSupply.toString());
     const properties = [];
 
     for (let i = 0; i < totalSupply; i++) {
@@ -61,7 +60,6 @@ const getProperties = async () => {
       }
     }
 
-    console.log("Propriétés récupérées :", properties);
     return properties;
   } catch (err) {
     console.error("Erreur lors de la récupération des propriétés :", err);
@@ -70,12 +68,11 @@ const getProperties = async () => {
 };
 const buyProperty = async (propertyId, salePrice) => {
   try {
-    const contract = getContract(); // Assurez-vous que le contrat est initialisé
+    const contract = getContract();
     const tx = await contract.buyProperty(propertyId, {
-      value: ethers.parseEther(salePrice.toString()), // Montant à envoyer pour l'achat
+      value: ethers.parseEther(salePrice.toString()),
     });
-    await tx.wait(); // Attendre que la transaction soit confirmée
-    console.log(`Propriété ${propertyId} achetée avec succès !`);
+    await tx.wait();
     return true;
   } catch (err) {
     console.error(
@@ -97,7 +94,6 @@ const updateProperty = async (
     const contract = getContract();
     const signer = await provider.getSigner();
 
-    // Vérifications avant conversion
     const formattedValue = newValue
       ? ethers.parseEther(newValue.toString())
       : ethers.parseEther("0");
@@ -106,24 +102,17 @@ const updateProperty = async (
       : ethers.parseEther("0");
     const formattedSurface = newSurface ? Number(newSurface) : 0;
 
-    console.log("Données avant mise à jour :", {
-      tokenId,
-      formattedValue,
-      formattedSurface,
-      newForSale,
-      formattedSalePrice,
-    });
-
-    const tx = await contract.connect(signer).updateProperty(
-      tokenId,
-      formattedValue, // Valeur convertie
-      formattedSurface, // Surface convertie en nombre
-      newForSale,
-      formattedSalePrice // Prix converti en wei
-    );
+    const tx = await contract
+      .connect(signer)
+      .updateProperty(
+        tokenId,
+        formattedValue,
+        formattedSurface,
+        newForSale,
+        formattedSalePrice
+      );
 
     await tx.wait();
-    console.log(`Propriété ${tokenId} mise à jour avec succès !`);
   } catch (err) {
     console.error("Erreur lors de la mise à jour de la propriété :", err);
     alert(`Erreur lors de la mise à jour : ${err.message}`);
@@ -134,10 +123,6 @@ const getUserTransactions = async (userAddress) => {
   try {
     const contract = getContract();
 
-    console.log("Adresse du contrat :", contract.target);
-    console.log("Adresse de l'utilisateur :", userAddress);
-
-    // Récupérer les logs des transactions
     const filter = contract.filters.PropertyTransferred(
       null,
       null,
@@ -145,24 +130,21 @@ const getUserTransactions = async (userAddress) => {
     );
     const logs = await contract.queryFilter(filter);
 
-    console.log("Logs récupérés :", logs);
-
     const transactions = await Promise.all(
       logs.map(async (log) => {
-        const block = await provider.getBlock(log.blockNumber); // Récupérer le block
-        const date = new Date(block.timestamp * 1000).toLocaleDateString(); // Convertir timestamp
+        const block = await provider.getBlock(log.blockNumber);
+        const date = new Date(block.timestamp * 1000).toLocaleDateString();
 
         return {
           tokenId: log.args.tokenId.toString(),
           from: log.args.from,
           to: log.args.to,
           value: ethers.formatEther(log.args.value.toString()),
-          date: date, // Ajout de la date
+          date: date,
         };
       })
     );
 
-    console.log("Transactions formatées :", transactions);
     return transactions;
   } catch (err) {
     console.error(
@@ -177,10 +159,9 @@ const getUserProperties = async () => {
   try {
     const contract = getContract();
     const signer = await provider.getSigner();
-    const userAddress = await signer.getAddress(); // Récupération de l'adresse de l'utilisateur connecté
+    const userAddress = await signer.getAddress();
 
     const totalSupply = await contract.totalSupply();
-    console.log("Total Supply :", totalSupply.toString());
 
     const userProperties = [];
 
@@ -189,7 +170,6 @@ const getUserProperties = async () => {
         const propertyDetails = await contract.getPropertyDetails(i);
         const owner = await contract.ownerOf(i);
 
-        // Vérifie si l'utilisateur connecté est propriétaire de la propriété
         if (owner.toLowerCase() === userAddress.toLowerCase()) {
           userProperties.push({
             id: i,
@@ -219,7 +199,6 @@ const getUserProperties = async () => {
       }
     }
 
-    console.log("Propriétés de l'utilisateur :", userProperties);
     return userProperties;
   } catch (err) {
     console.error(
@@ -235,17 +214,11 @@ const tradeProperty = async (tokenIdsFromUser1, tokenIdsFromUser2, user2) => {
     const contract = getContract();
     const signer = await provider.getSigner();
 
-    console.log("Échange de propriétés en cours...");
-    console.log("Propriétés User1 : ", tokenIdsFromUser1);
-    console.log("Propriétés User2 : ", tokenIdsFromUser2);
-    console.log("User2 : ", user2);
-
     const tx = await contract
       .connect(signer)
       .tradeProperty(tokenIdsFromUser1, tokenIdsFromUser2, user2);
 
     await tx.wait();
-    console.log("Échange effectué avec succès !");
     return true;
   } catch (err) {
     console.error("Erreur lors de l'échange :", err);
@@ -257,9 +230,6 @@ const getUserPropertiesByAddress = async (userAddress) => {
   try {
     const contract = getContract();
     const propertyIds = await contract.getUserPropertiesByAddress(userAddress);
-
-    // ✅ Vérifier si on reçoit bien un tableau valide
-    console.log("IDs des propriétés récupérées :", propertyIds);
 
     if (!propertyIds || propertyIds.length === 0) {
       console.warn("L'utilisateur ne possède aucune propriété.");
@@ -290,37 +260,10 @@ const getUserPropertiesByAddress = async (userAddress) => {
       });
     }
 
-    console.log("Propriétés récupérées :", properties);
     return properties;
   } catch (err) {
     console.error("🚨 Erreur lors de la récupération des propriétés :", err);
     return [];
-  }
-};
-const tradeWithMetaMask = async (toAddress, valueInEth) => {
-  try {
-    if (!window.ethereum) throw new Error("MetaMask n'est pas installé !");
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const senderAddress = await signer.getAddress();
-
-    console.log("📌 Envoi depuis :", senderAddress);
-    console.log("📌 Envoi vers :", toAddress);
-    console.log("📌 Montant :", valueInEth);
-
-    const tx = await signer.sendTransaction({
-      to: toAddress,
-      value: ethers.parseEther(valueInEth.toString()), // Convertir en Wei
-    });
-
-    console.log("✅ Transaction envoyée :", tx);
-    await tx.wait();
-    console.log("🎉 Échange validé !");
-    return tx;
-  } catch (err) {
-    console.error("🚨 Erreur lors de l'échange :", err);
-    return null;
   }
 };
 
@@ -339,20 +282,16 @@ const proposeTradeWithMetaMask = async (
     const tradeData = {
       user1: user1Address,
       user2: user2Address,
-      user1Tokens: user1Tokens.join(","), // Stocker sous forme de chaîne
+      user1Tokens: user1Tokens.join(","),
       user2Tokens: user2Tokens.join(","),
       timestamp: Date.now(),
     };
 
-    console.log("📌 Échange proposé :", tradeData);
-
     const signature = await signer.signMessage(JSON.stringify(tradeData));
-
-    console.log("✅ Signature générée :", signature);
 
     return { tradeData, signature };
   } catch (err) {
-    console.error("🚨 Erreur lors de la signature de l'échange :", err);
+    console.error("Erreur lors de la signature de l'échange :", err);
     return null;
   }
 };
@@ -367,7 +306,7 @@ const acceptTradeWithMetaMask = async (tradeData, signature) => {
 
     if (user2Address.toLowerCase() !== tradeData.user2.toLowerCase()) {
       throw new Error(
-        "🚨 Vous n'êtes pas l'utilisateur autorisé à accepter cet échange !"
+        "Vous n'êtes pas l'utilisateur autorisé à accepter cet échange !"
       );
     }
 
@@ -377,12 +316,8 @@ const acceptTradeWithMetaMask = async (tradeData, signature) => {
     );
 
     if (recoveredAddress.toLowerCase() !== tradeData.user1.toLowerCase()) {
-      throw new Error(
-        "🚨 Signature invalide ! L'échange pourrait être falsifié."
-      );
+      throw new Error("Signature invalide ! L'échange pourrait être falsifié.");
     }
-
-    console.log("✅ Signature vérifiée ! L'échange est authentique.");
 
     const contract = getContract();
     const tx = await contract
@@ -394,22 +329,21 @@ const acceptTradeWithMetaMask = async (tradeData, signature) => {
       );
 
     await tx.wait();
-    console.log("🎉 Échange validé et exécuté !");
     return true;
   } catch (err) {
-    console.error("🚨 Erreur lors de l'acceptation de l'échange :", err);
+    console.error("Erreur lors de l'acceptation de l'échange :", err);
     return false;
   }
 };
 const getCooldownAndOwnershipInfo = async (userAddress) => {
   try {
-    const contract = getContract(); // Récupérer l'instance du contrat
+    const contract = getContract();
     const cooldownData = await contract.getCooldownAndOwnershipInfo(
       userAddress
     );
 
     if (!cooldownData || cooldownData.length < 4) {
-      console.error("❌ Données de cooldown invalides :", cooldownData);
+      console.error("Données de cooldown invalides :", cooldownData);
       return {
         lastTxTime: 0,
         nextAllowedTx: 0,
@@ -425,7 +359,7 @@ const getCooldownAndOwnershipInfo = async (userAddress) => {
       propertiesOwned: Number(cooldownData[3] || 0),
     };
   } catch (error) {
-    console.error("🚨 Erreur lors de la récupération du cooldown :", error);
+    console.error("Erreur lors de la récupération du cooldown :", error);
     return {
       lastTxTime: 0,
       nextAllowedTx: 0,

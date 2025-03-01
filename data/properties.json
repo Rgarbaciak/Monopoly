@@ -6,7 +6,7 @@
         "value": "14",
         "surface": 234,
         "documentHash": "docHashMaison1",
-        "imageHash": "imgHashMaison1",
+        "imageHash": "QmcHxcrJ5z7phu4tbaSw366FDgYBTnju7cbkQia2EHBEcE",
         "forSale": false,
         "salePrice": "10"
     },
@@ -17,7 +17,7 @@
         "value": "16",
         "surface": 213,
         "documentHash": "docHashMaison2",
-        "imageHash": "imgHashMaison2",
+        "imageHash": "Qme7KgjagW15FB1wHVAxmRP3NeW94EnDaEoYBUU93orzqj",
         "forSale": false,
         "salePrice": "1"
     },
@@ -28,8 +28,8 @@
         "location": "Rue 3",
         "value": "12",
         "surface": 147,
-        "documentHash": "docHashMaison3",
-        "imageHash": "imgHashMaison3",
+        "documentHash": "QmenJ9s7nmuo4tTmhXmT5bisGdSNXmzgCxKVnm5YtAhnyc",
+        "imageHash": "QmUQEsoEzjEssmFtN52CEnSDd9ypfZQPL3i7aCmXmVzV4P",
         "forSale": true,
         "salePrice": "5"
     },

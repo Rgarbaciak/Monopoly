@@ -316,7 +316,6 @@ contract MonopolyToken is ERC721, Ownable {
             return new uint256[](0);
         }
 
-        // Créer un tableau pour stocker les IDs des propriétés
         uint256[] memory userProperties = new uint256[](count);
         uint256 index = 0;
 
@@ -351,7 +350,6 @@ contract MonopolyToken is ERC721, Ownable {
             );
         }
 
-        // Verify ownership for user2
         for (uint256 i = 0; i < tokenIdsFromUser2.length; i++) {
             require(
                 ownerOf(tokenIdsFromUser2[i]) == user2,
@@ -359,7 +357,6 @@ contract MonopolyToken is ERC721, Ownable {
             );
         }
 
-        // Execute the trade
         for (uint256 i = 0; i < tokenIdsFromUser1.length; i++) {
             _previousOwners[tokenIdsFromUser1[i]].push(
                 ownerOf(tokenIdsFromUser1[i])
@@ -400,19 +397,16 @@ contract MonopolyToken is ERC721, Ownable {
             "You cannot buy your own property"
         );
 
-        // Vérification cooldown
         require(
             block.timestamp >= _lastTransactionTime[msg.sender] + 300,
             "Wait 5 minutes before buying again"
         );
 
-        // Vérification lock 10 minutes
         require(
             block.timestamp >= _purchaseLock[msg.sender] + 600,
             "Wait 10 minutes after purchase"
         );
 
-        // Vérification max 4 propriétés
         require(_ownershipCounts[msg.sender] < 4, "Max 4 properties allowed");
 
         address seller = ownerOf(tokenId);

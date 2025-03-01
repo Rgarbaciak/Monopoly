@@ -1,10 +1,10 @@
 const fs = require("fs");
 const dotenv = require("dotenv");
 
-const backendEnv = dotenv.parse(fs.readFileSync("./.env")); // Fichier .env du backend
+const backendEnv = dotenv.parse(fs.readFileSync("./.env"));
 const frontendEnv = Object.entries(backendEnv)
   .map(([key, value]) => `REACT_APP_${key}="${value}"`)
   .join("\n");
 
-fs.writeFileSync("./frontend/.env", frontendEnv); // Écrit un fichier .env pour le frontend
+fs.writeFileSync("./frontend/.env", frontendEnv);
 console.log("✅ Fichier .env synchronisé avec succès !");

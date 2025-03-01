@@ -9,13 +9,16 @@ function Profil() {
   const [properties, setProperties] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("properties"); // "properties" ou "transactions"
+  const [view, setView] = useState("properties");
+  const [userAddress, setUserAddress] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        await connectWallet();
+        const address = await connectWallet();
+        setUserAddress(address);
+
         const fetchedProperties = await getUserProperties();
         const fetchedTransactions = await getUserTransactions();
         setProperties(fetchedProperties);
@@ -94,25 +97,36 @@ function Profil() {
         <div className="mt-6 px-4">
           {transactions.length > 0 ? (
             <ul className="bg-white p-4 rounded-lg shadow-md">
-              {transactions.map((tx, index) => (
-                <li key={index} className="border-b py-2">
-                  <p>
-                    <strong>Propriété :</strong> {tx.tokenId}
-                  </p>
-                  <p>
-                    <strong>De :</strong> {tx.from}
-                  </p>
-                  <p>
-                    <strong>À :</strong> {tx.to}
-                  </p>
-                  <p>
-                    <strong>Prix :</strong> {tx.value} ETH
-                  </p>
-                  <p>
-                    <strong>Date :</strong> {tx.date}
-                  </p>
-                </li>
-              ))}
+              {transactions.map((tx, index) => {
+                const isGain =
+                  tx.to.toLowerCase() === String(userAddress).toLowerCase();
+
+                const transactionSign = isGain ? "+" : "-";
+                const transactionColor = isGain
+                  ? "text-green-500"
+                  : "text-red-500";
+
+                return (
+                  <li key={index} className="border-b py-2">
+                    <p>
+                      <strong>Propriété :</strong> {tx.tokenId}
+                    </p>
+                    <p>
+                      <strong>De :</strong> {tx.from}
+                    </p>
+                    <p>
+                      <strong>À :</strong> {tx.to}
+                    </p>
+                    <p className={`font-bold ${transactionColor}`}>
+                      <strong>Transaction :</strong> {transactionSign}{" "}
+                      {tx.value} ETH
+                    </p>
+                    <p>
+                      <strong>Date :</strong> {tx.date}
+                    </p>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="text-center text-lg mt-4">

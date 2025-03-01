@@ -102,12 +102,12 @@ function Shop() {
         newSalePrice
       );
       alert("Propriété mise à jour !");
-      const updatedProperties = await getProperties(); // Recharger les propriétés
+      const updatedProperties = await getProperties();
       setProperties(updatedProperties);
     } catch (err) {
       alert("Erreur lors de la mise à jour :" + err.message);
     }
-    setEditingProperty(null); // Ferme le formulaire après modification
+    setEditingProperty(null);
   };
 
   if (loading) {
@@ -143,14 +143,31 @@ function Shop() {
             key={property.id}
             className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg"
           >
+            <img
+              src={`http://127.0.0.1:8080/ipfs/${property.imageHash}`}
+              height="200"
+              width="200"
+              alt={property.name}
+            />
             <h2 className="text-xl font-bold mb-2">{property.name}</h2>
             <p>Type : {property.type}</p>
             <p>Localisation : {property.location}</p>
             <p>Prix : {property.salePrice} ETH</p>
             <p>Surface : {property.surface} m²</p>
             <p>Propriétaire : {property.owner}</p>
+            <button
+              className="mt-2 px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700"
+              onClick={() =>
+                window.open(
+                  `http://127.0.0.1:8080/ipfs/${property.documentHash}`,
+                  "_blank"
+                )
+              }
+            >
+              Voir le document
+            </button>
+            <div />
 
-            {/* Bouton d'achat si la propriété est en vente */}
             {property.forSale ? (
               <button
                 className={`mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 ${
@@ -166,8 +183,6 @@ function Shop() {
                 Non disponible à la vente
               </p>
             )}
-
-            {/* Bouton Modifier (seulement si l'utilisateur est le propriétaire) */}
             {property.owner.toLowerCase() ===
               window.ethereum.selectedAddress && (
               <>
