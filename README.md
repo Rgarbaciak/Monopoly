@@ -22,7 +22,7 @@ MonopolyToken est un smart contract Ethereum permettant la gestion d'un jeu de M
 
 ## Installation et Déploiement
 
-### 1️⃣ Installer les dépendances
+### 1. Installer les dépendances
 
 Assurez-vous d’avoir **Node.js** et **Hardhat** installés.
 
@@ -30,13 +30,13 @@ Assurez-vous d’avoir **Node.js** et **Hardhat** installés.
 npm install
 ```
 
-### 2️⃣ Lancer un nœud local avec Hardhat
+### 2. Lancer un nœud local avec Hardhat
 
 ```sh
 npx hardhat node
 ```
 
-### 3️⃣ Déployer le smart contract
+### 3. Déployer le smart contract
 
 Dans un autre terminal :
 
@@ -44,7 +44,68 @@ Dans un autre terminal :
 npx hardhat run scripts/deploy.js --network localhost
 ```
 
-### 4️⃣ Démarrer l’interface React
+Copier **Adresse du contrat** dans le .env.example dans **CONTRACT_ADDRESS**
+
+Copier son adresse MetaMask dans **OWNER_ADDRESS**
+
+### 4. Syncroniser les .env
+
+Dans un autre terminal :
+
+```sh
+node sync-env.js
+```
+
+Vérifier que le .env du frontend est bien à jour.
+
+### 5. Se donner des fonds
+
+```sh
+npx hardhat run scripts/sendETH.js --network localhost
+```
+
+### 6. Initier les données des propriétés
+
+```sh
+npx hardhat run scripts/init.js --network localhost
+```
+
+### 7. Installation d'IPFS
+
+Téléchargez [Kubo](https://docs.ipfs.tech/install/command-line/#install-kubo-windows) (IPFS CLI) depuis Kubo.
+
+Décompressez et ajoutez l'exécutable ipfs à votre PATH.
+
+Initialisez IPFS avec :
+
+```sh
+ipfs init
+```
+Démarrez le daemon IPFS :
+
+```sh
+ipfs daemon
+```
+
+Ajoutez une image à IPFS avec :
+
+```sh
+ipfs add mon_image.jpg
+```
+
+Vous obtiendrez un CID (Content Identifier), exemple :
+
+```sh
+added Qm123abc456def mon_image.jpg
+```
+
+Consultation de l’image sur IPFS :
+
+```sh
+http://127.0.0.1:8080/ipfs/Qm123abc456def
+```
+
+### 8. Démarrer l’interface React
 
 ```sh
 cd frontend
