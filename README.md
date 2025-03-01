@@ -48,6 +48,8 @@ Copier **Adresse du contrat** dans le .env.example dans **CONTRACT_ADDRESS**
 
 Copier son adresse MetaMask dans **OWNER_ADDRESS**
 
+Enlever le **.example**
+
 ### 4. Syncroniser les .env
 
 Dans un autre terminal :
