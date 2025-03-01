@@ -137,20 +137,6 @@ added Qm123ABC456 monImage.png
 http://localhost:8080/ipfs/Qm123ABC456
 ```
 
-### 📡 Ajouter une image via un script Node.js
-
-```javascript
-const { create } = require("ipfs-http-client");
-const fs = require("fs");
-const ipfs = create({ url: "http://localhost:5001" });
-
-async function uploadImageToIPFS(imagePath) {
-  const imageBuffer = fs.readFileSync(imagePath);
-  const { cid } = await ipfs.add(imageBuffer);
-  return cid.toString();
-}
-```
-
 ## Tests
 
 ### Exécuter les tests Hardhat
@@ -167,8 +153,8 @@ npx hardhat test
 
 ## Contributeurs
 
-- **Nom du Développeur 1** (@github)
-- **Nom du Développeur 2** (@github)
+- **Garbaciak Robin**
+- **David Guillaume** 
 
 ## Licence
 
